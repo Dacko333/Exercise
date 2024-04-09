@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movies Landing Page</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Movies</a>
+      </div>
+    </nav>
+
+    <!-- Filter Buttons -->
+    <div class="container mt-3">
+      <div id="filterButtons" class="btn-group">
+        <button type="button" class="btn btn-primary" data-filter="All">
+          All
+        </button>
+        <button type="button" class="btn btn-primary" data-filter="Action">
+          Action
+        </button>
+        <button type="button" class="btn btn-primary" data-filter="Comedy">
+          Comedy
+        </button>
+        <button type="button" class="btn btn-primary" data-filter="Drama">
+          Drama
+        </button>
+        <button type="button" class="btn btn-primary" data-filter="Horror">
+          Horror
+        </button>
+        <button type="button" class="btn btn-primary" data-filter="Sci-Fi">
+          Sci-Fi
+        </button>
+      </div>
+    </div>
+
+    <!-- Movie Posters -->
+    <div class="container mt-3" id="moviePosters">
+      <!-- Movies will be dynamically added here -->
+    </div>
+
+    <!-- Movie Details Modal -->
+    <div
+      class="modal fade"
+      id="movieModal"
+      tabindex="-1"
+      aria-labelledby="movieModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="movieModalLabel">Movie Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="movieModalBody">
+            <!-- Movie details will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Movie Form -->
+    <div class="container mt-3">
+      <button
+        type="button"
+        class="btn btn-success"
+        data-bs-toggle="modal"
+        data-bs-target="#addMovieModal"
+      >
+        Add Movie
+      </button>
+    </div>
+
+    <!-- Add Movie Form Modal -->
+    <div
+      class="modal fade"
+      id="addMovieModal"
+      tabindex="-1"
+      aria-labelledby="addMovieModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addMovieModalLabel">Add Movie</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addMovieForm">
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  maxlength="250"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="year"
+                  name="year"
+                  pattern="\d{4}"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  name="description"
+                  rows="3"
+                  maxlength="500"
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="genre" class="form-label">Genre</label>
+                <select class="form-select" id="genre" name="genre" required>
+                  <option value="">Select Genre</option>
+                  <option value="Action">Action</option>
+                  <option value="Comedy">Comedy</option>
+                  <option value="Drama">Drama</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Sci-Fi">Sci-Fi</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ajax Quote -->
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <h2>Random Quote:</h2>
+          <p id="quote">Fetching quote...</p>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Movie data
+        const movies = [
+          {
+            title: "Mad Max: Fury Road",
+            year: "2015",
+            description:
+              "In an apocalyptic world, a tyrant rules over a stark desert, controlling every drop of water. Two rebels, one escaping grief and the other reaching out to her childhood, are the last hope for a few.",
+            genre: "Action",
+          },
+          {
+            title: "Money Heist",
+            year: "2017",
+            description:
+              "When the national mint and a touring school group are held hostage by robbers, police believe that the thieves have no way out. Little do they know that the thieves have a bigger plan in store.",
+            genre: "Action",
+          },
+          {
+            title: "Ghostbusters: Afterlife",
+            year: "2021",
+            description:
+              "A single mother and her two children move into a farmhouse inherited from her estranged father. As they settle in, they discover their associations with Ghostbusters.",
+            genre: "Comedy",
+          },
+          {
+            title: "Schindler's List",
+            year: "1993",
+            description:
+              "Oscar Schindler, a successful and narcissistic German businessman, slowly starts worrying about the safety of his Jewish workforce after witnessing their persecution in Poland during World War II.",
+            genre: "Drama",
+          },
+          {
+            title: "Annabelle",
+            year: "2014",
+            description:
+              "John and Mia Form are attacked by members of a satanic cult that uses their old doll as a conduit to make their life miserable. This unleashes a string of paranormal events in the Forms' residence.",
+            genre: "Horror",
+          },
+          {
+            title: "Godzilla x Kong: The New Empire",
+            year: "2024",
+            description:
+              "Godzilla and the almighty Kong face a colossal threat hidden deep within the planet, challenging their very existence and the survival of the human race.",
+            genre: "Sci-Fi",
+          },
+          {
+            title: "Mad Max: Fury Road",
+            year: "2015",
+            description:
+              "In an apocalyptic world, a tyrant rules over a stark desert, controlling every drop of water. Two rebels, one escaping grief and the other reaching out to her childhood, are the last hope for a few.",
+            genre: "Action",
+          },
+          {
+            title: "Money Heist",
+            year: "2017",
+            description:
+              "When the national mint and a touring school group are held hostage by robbers, police believe that the thieves have no way out. Little do they know that the thieves have a bigger plan in store.",
+            genre: "Action",
+          },
+          {
+            title: "Ghostbusters: Afterlife",
+            year: "2021",
+            description:
+              "A single mother and her two children move into a farmhouse inherited from her estranged father. As they settle in, they discover their associations with Ghostbusters.",
+            genre: "Comedy",
+          },
+          {
+            title: "Schindler's List",
+            year: "1993",
+            description:
+              "Oscar Schindler, a successful and narcissistic German businessman, slowly starts worrying about the safety of his Jewish workforce after witnessing their persecution in Poland during World War II.",
+            genre: "Drama",
+          },
+          {
+            title: "Annabelle",
+            year: "2014",
+            description:
+              "John and Mia Form are attacked by members of a satanic cult that uses their old doll as a conduit to make their life miserable. This unleashes a string of paranormal events in the Forms' residence.",
+            genre: "Horror",
+          },
+          {
+            title: "Godzilla x Kong: The New Empire",
+            year: "2024",
+            description:
+              "Godzilla and the almighty Kong face a colossal threat hidden deep within the planet, challenging their very existence and the survival of the human race.",
+            genre: "Sci-Fi",
+          },
+          {
+            title: "Mad Max: Fury Road",
+            year: "2015",
+            description:
+              "In an apocalyptic world, a tyrant rules over a stark desert, controlling every drop of water. Two rebels, one escaping grief and the other reaching out to her childhood, are the last hope for a few.",
+            genre: "Action",
+          },
+          {
+            title: "Money Heist",
+            year: "2017",
+            description:
+              "When the national mint and a touring school group are held hostage by robbers, police believe that the thieves have no way out. Little do they know that the thieves have a bigger plan in store.",
+            genre: "Action",
+          },
+          {
+            title: "Ghostbusters: Afterlife",
+            year: "2021",
+            description:
+              "A single mother and her two children move into a farmhouse inherited from her estranged father. As they settle in, they discover their associations with Ghostbusters.",
+            genre: "Comedy",
+          },
+          {
+            title: "Casablanca",
+            year: "1942",
+            description:
+              "Oscar Schindler, a successful and narcissistic German businessman, slowly starts worrying about the safety of his Jewish workforce after witnessing their persecution in Poland during World War II.",
+            genre: "Drama",
+          },
+          {
+            title: "The Nun",
+            year: "2014",
+            description:
+              "John and Mia Form are attacked by members of a satanic cult that uses their old doll as a conduit to make their life miserable. This unleashes a string of paranormal events in the Forms' residence.",
+            genre: "Horror",
+          },
+          {
+            title: "Interstellar",
+            year: "2010",
+            description:
+              "Godzilla and the almighty Kong face a colossal threat hidden deep within the planet, challenging their very existence and the survival of the human race.",
+            genre: "Sci-Fi",
+          },
+          {
+            title: "Road House",
+            year: "2015",
+            description:
+              "In an apocalyptic world, a tyrant rules over a stark desert, controlling every drop of water. Two rebels, one escaping grief and the other reaching out to her childhood, are the last hope for a few.",
+            genre: "Action",
+          },
+          {
+            title: "Punisher",
+            year: "2017",
+            description:
+              "When the national mint and a touring school group are held hostage by robbers, police believe that the thieves have no way out. Little do they know that the thieves have a bigger plan in store.",
+            genre: "Action",
+          },
+          {
+            title: "Bad guys",
+            year: "2021",
+            description:
+              "A single mother and her two children move into a farmhouse inherited from her estranged father. As they settle in, they discover their associations with Ghostbusters.",
+            genre: "Comedy",
+          },
+          {
+            title: "12 angry men",
+            year: "1993",
+            description:
+              "Oscar Schindler, a successful and narcissistic German businessman, slowly starts worrying about the safety of his Jewish workforce after witnessing their persecution in Poland during World War II.",
+            genre: "Drama",
+          },
+          {
+            title: "Curse of La Lorrona",
+            year: "2014",
+            description:
+              "John and Mia Form are attacked by members of a satanic cult that uses their old doll as a conduit to make their life miserable. This unleashes a string of paranormal events in the Forms' residence.",
+            genre: "Horror",
+          },
+          {
+            title: "King King",
+            year: "2024",
+            description:
+              "Godzilla and the almighty Kong face a colossal threat hidden deep within the planet, challenging their very existence and the survival of the human race.",
+            genre: "Sci-Fi",
+          },
+          {
+            title: "Transformers",
+            year: "2015",
+            description:
+              "In an apocalyptic world, a tyrant rules over a stark desert, controlling every drop of water. Two rebels, one escaping grief and the other reaching out to her childhood, are the last hope for a few.",
+            genre: "Action",
+          },
+          {
+            title: "Breaking bad",
+            year: "2017",
+            description:
+              "When the national mint and a touring school group are held hostage by robbers, police believe that the thieves have no way out. Little do they know that the thieves have a bigger plan in store.",
+            genre: "Action",
+          },
+          {
+            title: "Rush hour",
+            year: "2021",
+            description:
+              "A single mother and her two children move into a farmhouse inherited from her estranged father. As they settle in, they discover their associations with Ghostbusters.",
+            genre: "Comedy",
+          },
+          {
+            title: "Godfather",
+            year: "1993",
+            description:
+              "Oscar Schindler, a successful and narcissistic German businessman, slowly starts worrying about the safety of his Jewish workforce after witnessing their persecution in Poland during World War II.",
+            genre: "Drama",
+          },
+          {
+            title: "Conjuring",
+            year: "2014",
+            description:
+              "John and Mia Form are attacked by members of a satanic cult that uses their old doll as a conduit to make their life miserable. This unleashes a string of paranormal events in the Forms' residence.",
+            genre: "Horror",
+          },
+          {
+            title: "Terminator",
+            year: "2024",
+            description:
+              "Godzilla and the almighty Kong face a colossal threat hidden deep within the planet, challenging their very existence and the survival of the human race.",
+            genre: "Sci-Fi",
+          },
+        ];
+
+        // Display movies
+        function displayMovies(genre) {
+          $("#moviePosters").empty();
+          movies.forEach((movie) => {
+            if (genre === "All" || movie.genre === genre) {
+              $("#moviePosters").append(`
+                                                <div class="card" style="width: 15rem;">
+                                                  <img src="https://via.placeholder.com/200x300" class="card-img-top" alt="...">
+                                                  <div class="card-body">
+                                                    <h5 class="card-title">${movie.title}</h5>
+                                                    <p class="card-text">${movie.year} - ${movie.description}</p>
+                                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#movieModal" data-title="${movie.title}" data-year="${movie.year}" data-description="${movie.description}" data-genre="${movie.genre}">Details</button>
+                                                  </div>
+                                                </div>
+                                              `);
+            }
+          });
+        }
+
+        $("#moviePosters").on("click", ".card-body button", function () {
+          const title = $(this).data("title");
+          const year = $(this).data("year");
+          const description = $(this).data("description");
+          const genre = $(this).data("genre");
+          $("#movieModalBody").html(`
+                                            <p>Title: ${title}</p>
+                                            <p>Year: ${year}</p>
+                                            <p>Description: ${description}</p>
+                                            <p>Genre: ${genre}</p>
+                                          `);
+        });
+
+        // Filter movies by genre
+        $("#filterButtons").on("click", "button", function () {
+          const genre = $(this).data("filter");
+          displayMovies(genre);
+        });
+
+        // Fetch and display random quote
+        function fetchRandomQuote() {
+          $.ajax({
+            url: "https://quoteapi.pythonanywhere.com/random",
+            method: "GET",
+            success: function (data) {
+              $("#quote").text(data.Quotes[0].quote);
+            },
+            error: function () {
+              $("#quote").text("Failed to fetch quote.");
+            },
+          });
+        }
+
+        // Call the function when the page loads
+        $(document).ready(function () {
+          fetchRandomQuote();
+        });
+        // Add movie to DOM dynamically
+        $("#addMovieForm").submit(function (event) {
+          event.preventDefault();
+          const title = $("#title").val();
+          const year = $("#year").val();
+          const description = $("#description").val();
+          const genre = $("#genre").val();
+          if (title && year && description && genre) {
+            movies.push({
+              title: title,
+              year: year,
+              description: description,
+              genre: genre,
+            });
+            displayMovies("All");
+            $("#addMovieModal").modal("hide");
+            $("#addMovieForm")[0].reset();
+          } else {
+            alert("Please fill in all fields.");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
